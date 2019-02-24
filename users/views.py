@@ -1,0 +1,41 @@
+from django.contrib.auth.models import User
+from rest_framework import generics
+from rest_framework import permissions
+from rest_framework.response import Response
+from rest_framework.views import status
+
+
+class SignUpView(generics.CreateAPIView):
+    """
+    POST auth/signup/
+    """
+    permission_classes = (permissions.AllowAny, )
+
+    def post(self, request, *args, **kwargs):
+        username = request.data.get('username', '')
+        password = request.data.get('password', '')
+        email = request.data.get('email', '')
+
+        if not username or not password or not email:
+            return Response(
+                data={'message': 'username, password and email are required '
+                                 'to sign up a user'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        if User.objects.filter(username=username).exists():
+            return Response(
+                data={'message': 'username is already in use'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        if User.objects.filter(email=email).exists():
+            return Response(
+                data={'message': 'email is already in use'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        User.objects.create_user(username=username, password=password,
+                                 email=email)
+
+        return Response(status=status.HTTP_201_CREATED)

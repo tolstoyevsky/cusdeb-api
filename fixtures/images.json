@@ -1,0 +1,219 @@
+[
+{
+  "model": "images.distroname",
+  "pk": 1,
+  "fields": {
+    "name": "Devuan"
+  }
+},
+{
+  "model": "images.distroname",
+  "pk": 2,
+  "fields": {
+    "name": "Raspbian"
+  }
+},
+{
+  "model": "images.distroname",
+  "pk": 3,
+  "fields": {
+    "name": "Ubuntu"
+  }
+},
+{
+  "model": "images.codename",
+  "pk": 1,
+  "fields": {
+    "name": "Jessie"
+  }
+},
+{
+  "model": "images.codename",
+  "pk": 2,
+  "fields": {
+    "name": "Stretch"
+  }
+},
+{
+  "model": "images.codename",
+  "pk": 3,
+  "fields": {
+    "name": "Xenial Xerus"
+  }
+},
+{
+  "model": "images.codename",
+  "pk": 4,
+  "fields": {
+    "name": "Bionic Beaver"
+  }
+},
+{
+  "model": "images.port",
+  "pk": 1,
+  "fields": {
+    "name": "armhf"
+  }
+},
+{
+  "model": "images.port",
+  "pk": 2,
+  "fields": {
+    "name": "arm64"
+  }
+},
+{
+  "model": "images.os",
+  "pk": 1,
+  "fields": {
+    "name": 1,
+    "codename": 1,
+    "version": "1",
+    "port": 1,
+    "active": true
+  }
+},
+{
+  "model": "images.os",
+  "pk": 2,
+  "fields": {
+    "name": 2,
+    "codename": 2,
+    "version": "9",
+    "port": 1,
+    "active": true
+  }
+},
+{
+  "model": "images.os",
+  "pk": 3,
+  "fields": {
+    "name": 3,
+    "codename": 3,
+    "version": "16.04",
+    "port": 1,
+    "active": true
+  }
+},
+{
+  "model": "images.os",
+  "pk": 4,
+  "fields": {
+    "name": 3,
+    "codename": 4,
+    "version": "18.04",
+    "port": 1,
+    "active": true
+  }
+},
+{
+  "model": "images.os",
+  "pk": 5,
+  "fields": {
+    "name": 3,
+    "codename": 4,
+    "version": "18.04",
+    "port": 2,
+    "active": true
+  }
+},
+{
+  "model": "images.devicename",
+  "pk": 1,
+  "fields": {
+    "name": "Raspberry Pi"
+  }
+},
+{
+  "model": "images.device",
+  "pk": 1,
+  "fields": {
+    "name": 1,
+    "generation": "",
+    "model": "Model B and B+",
+    "active": true,
+    "supported_os": [
+      2
+    ]
+  }
+},
+{
+  "model": "images.device",
+  "pk": 2,
+  "fields": {
+    "name": 1,
+    "generation": "2",
+    "model": "Model B",
+    "active": true,
+    "supported_os": [
+      1,
+      2,
+      3,
+      4
+    ]
+  }
+},
+{
+  "model": "images.device",
+  "pk": 3,
+  "fields": {
+    "name": 1,
+    "generation": "3",
+    "model": "Model B",
+    "active": true,
+    "supported_os": [
+      1,
+      2,
+      4,
+      5
+    ]
+  }
+},
+{
+  "model": "images.device",
+  "pk": 4,
+  "fields": {
+    "name": 1,
+    "generation": "",
+    "model": "Zero",
+    "active": true,
+    "supported_os": [
+      2
+    ]
+  }
+},
+{
+  "model": "images.buildtypename",
+  "pk": 1,
+  "fields": {
+    "name": "Classic image"
+  }
+},
+{
+  "model": "images.buildtypename",
+  "pk": 2,
+  "fields": {
+    "name": "Mender-compatible image"
+  }
+},
+{
+  "model": "images.buildtypename",
+  "pk": 3,
+  "fields": {
+    "name": "Mender artifact"
+  }
+},
+{
+  "model": "images.buildtype",
+  "pk": 2,
+  "fields": {
+    "device": 3,
+    "os": 2,
+    "build_type": [
+      1,
+      2,
+      3
+    ]
+  }
+}
+]
