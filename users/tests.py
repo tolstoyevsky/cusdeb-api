@@ -120,3 +120,33 @@ class AuthSigningUpAndSigningInUserTest(APITestCase):
 
         self.assertEqual(response.data, error_message)
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+
+class WhoAmIUserTest(APITestCase):
+    def __init__(self, *args, **kwargs):
+        super(WhoAmIUserTest, self).__init__(*args, **kwargs)
+        self._user = {
+            'username': 'test.user',
+            'password': 'secret',
+            'email': 'test.user@domain.com',
+        }
+
+    def setUp(self):
+        User.objects.create_user(**self._user)
+
+    def test_whoami(self):
+        url = reverse('token-obtain-pair', kwargs={'version': 'v1'})
+        auth = self.client.post(url, data=json.dumps(self._user),
+                                content_type='application/json')
+
+        self.fake_header = b'Bearer ' + json.loads(auth.content)['access'].encode()
+        url = reverse('who-am-i', kwargs={'version': 'v1'})
+        response = self.client.get(url, content_type='application/json', HTTP_AUTHORIZATION= self.fake_header)
+
+        self.assertEqual(response.content, b'{"username":"test.user"}')
+
+    def test_whoami_unauthorized(self):
+        url = reverse('who-am-i', kwargs={'version': 'v1'})
+        response = self.client.get(url, content_type='application/json')
+
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)

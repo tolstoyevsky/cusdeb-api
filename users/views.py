@@ -4,6 +4,8 @@ from rest_framework import permissions
 from rest_framework.response import Response
 from rest_framework.views import status
 
+from .serializers import CurrentUserSerializer
+
 
 class SignUpView(generics.CreateAPIView):
     """
@@ -39,3 +41,15 @@ class SignUpView(generics.CreateAPIView):
                                  email=email)
 
         return Response(status=status.HTTP_201_CREATED)
+
+
+class WhoAmIView(generics.RetrieveAPIView):
+    """
+    GET users/whoami/
+    """
+    queryset = User.objects.all()
+    serializer_class = CurrentUserSerializer
+    permission_classes = (permissions.IsAuthenticated,)
+
+    def get_object(self):
+        return self.request.user
