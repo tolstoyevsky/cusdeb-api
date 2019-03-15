@@ -9,4 +9,5 @@ urlpatterns = [  # pylint: disable=invalid-name
     re_path('api/(?P<version>(v1|v2))/users/', include('users.users_urls')),
     re_path('api/(?P<version>(v1|v2))/init/', include('images.init_urls')),
     re_path('api/(?P<version>(v1|v2))/images/', include('images.urls')),
+    path('', include('social_django.urls')),
 ]
