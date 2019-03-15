@@ -149,6 +149,8 @@ AUTHENTICATION_BACKENDS = [
     'social_core.backends.github.GithubOAuth2',
 
     'django.contrib.auth.backends.ModelBackend',
+
+    'users.backend.CaseInsensitiveModelBackend',
 ]
 
 SOCIAL_AUTH_PIPELINE = (
@@ -161,10 +163,9 @@ SOCIAL_AUTH_PIPELINE = (
     'social_core.pipeline.social_auth.associate_user',
 )
 
-LOGIN_REDIRECT_URL = '/api/v1/auth/token/social/'
-
 SOCIAL_AUTH_GITHUB_SCOPE = ['user:email']
 
+SOCIAL_AUTH_UUID_LENGTH = 4
 
 # Internationalization
 # https://docs.djangoproject.com/en/2.2/topics/i18n/
@@ -184,7 +185,3 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/2.2/howto/static-files/
 
 STATIC_URL = '/static/'
-
-AUTHENTICATION_BACKENDS = (
-    'users.backend.CaseInsensitiveModelBackend',
-)

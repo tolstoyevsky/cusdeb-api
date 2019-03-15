@@ -21,12 +21,14 @@ class CurrentUserSerializer(serializers.ModelSerializer):
 class SocialTokenObtainPairSerializer(serializers.Serializer):
     """Serializes the token data for social user. """
     def __init__(self, *args, **kwargs):
-        super(SocialTokenObtainPairSerializer, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
+
+        self.user = None
 
         self.fields['username'] = serializers.CharField()
 
     def validate(self, attrs):
-        data = super(SocialTokenObtainPairSerializer, self).validate(attrs)
+        data = super().validate(attrs)
 
         self.user = User.objects.get(username=data['username'])
 
