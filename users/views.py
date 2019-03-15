@@ -1,12 +1,14 @@
 """Module containing the class-based views related to creating and managing accounts in CusDeb. """
 
 from django.contrib.auth.models import User
+from django.http import JsonResponse
+from django.views import View
 from rest_framework import generics
 from rest_framework import permissions
 from rest_framework.response import Response
 from rest_framework.views import status
 
-from .serializers import CurrentUserSerializer
+from .serializers import CurrentUserSerializer, SocialTokenObtainPairSerializer
 
 
 class SignUpView(generics.CreateAPIView):
@@ -51,3 +53,16 @@ class WhoAmIView(generics.RetrieveAPIView):
 
     def get_object(self):
         return self.request.user
+
+
+class GetTokenForSocial(View):
+    """
+    GET auth/token/social/'
+    """
+    def get(self, request, *args, **kwargs):
+        serializer = SocialTokenObtainPairSerializer(
+            data={'username': request.user.username}
+        )
+        if serializer.is_valid():
+            return JsonResponse(serializer.validated_data, status=200)
+        return JsonResponse(serializer.errors, status=400)
