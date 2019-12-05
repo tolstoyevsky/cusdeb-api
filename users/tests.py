@@ -1,24 +1,12 @@
 import json
 
-from django.contrib.auth.models import User
 from django.urls import reverse
-from rest_framework.test import APITestCase
 from rest_framework.views import status
 
+from util.base_test import BaseSingleUserTest
 
-class AuthSigningUpAndSigningInUserTest(APITestCase):
-    def __init__(self, *args, **kwargs):
-        super(AuthSigningUpAndSigningInUserTest, self).__init__(*args,
-                                                                **kwargs)
-        self._user = {
-            'username': 'test.user',
-            'password': 'secret',
-            'email': 'test.user@domain.com',
-        }
 
-    def setUp(self):
-        User.objects.create_user(**self._user)
-
+class AuthSigningUpAndSigningInUserTest(BaseSingleUserTest):
     def test_creating_new_account(self):
         url = reverse('sign-up', kwargs={'version': 'v1'})
         user = {
@@ -122,18 +110,7 @@ class AuthSigningUpAndSigningInUserTest(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
 
-class WhoAmIUserTest(APITestCase):
-    def __init__(self, *args, **kwargs):
-        super(WhoAmIUserTest, self).__init__(*args, **kwargs)
-        self._user = {
-            'username': 'test.user',
-            'password': 'secret',
-            'email': 'test.user@domain.com',
-        }
-
-    def setUp(self):
-        User.objects.create_user(**self._user)
-
+class WhoAmIUserTest(BaseSingleUserTest):
     def test_whoami(self):
         url = reverse('token-obtain-pair', kwargs={'version': 'v1'})
         auth = self.client.post(url, data=json.dumps(self._user),

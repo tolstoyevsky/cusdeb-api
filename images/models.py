@@ -1,4 +1,6 @@
-from django.db import models
+from django.db import models, transaction, IntegrityError
+from django.db.models.signals import m2m_changed
+from django.dispatch import receiver
 
 
 class DistroName(models.Model):
@@ -74,9 +76,26 @@ class BuildTypeName(models.Model):
 
 
 class BuildType(models.Model):
-    device = models.ForeignKey(Device, models.PROTECT)
+    device = models.ForeignKey(Device, models.CASCADE)
     os = models.ForeignKey(OS, models.PROTECT)
     build_type = models.ManyToManyField(BuildTypeName)
 
+    class Meta:
+        unique_together = (('device', 'os'), )
+
     def __str__(self):
         return '{} on {}'.format(self.os, self.device)
+
+
+@receiver(m2m_changed, sender=Device.supported_os.through)
+def add_build_types(instance, **_kwargs):
+    default_build_type = BuildTypeName.objects.get(pk=1)
+    for os in instance.supported_os.all():
+        try:
+            with transaction.atomic():
+                build_type = BuildType.objects.create(device=instance, os=os)
+                build_type.build_type.add(default_build_type)
+        except IntegrityError:
+            # If the exception is raised, the default build type already
+            # associated with the device, so do nothing.
+            pass

@@ -1,8 +1,16 @@
-from rest_framework import generics
-from rest_framework import permissions
+from rest_framework import generics, permissions
 
-from .models import Image
-from .serializers import ImageSerializer
+from .models import Device, Image
+from .serializers import (
+    DeviceSerializer,
+    ImageSerializer,
+)
+
+
+class ListDevicesView(generics.ListAPIView):
+    queryset = Device.objects.filter(active=True)
+    serializer_class = DeviceSerializer
+    permission_classes = (permissions.IsAuthenticated, )
 
 
 class ListImagesView(generics.ListAPIView):
