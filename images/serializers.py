@@ -1,7 +1,7 @@
 from django.db.models import Q
 from rest_framework import serializers
 
-from .models import Device, Image, OS, BuildType
+from .models import Device, Image, OS, BuildType, BuildTypeName
 
 
 class OSSerializer(serializers.ModelSerializer):
@@ -12,10 +12,16 @@ class OSSerializer(serializers.ModelSerializer):
 
     def get_build_type(self, obj):
         device_id = self.context.get('device_id')
-        return BuildType.objects.filter(
+        build_types = BuildType.objects.filter(
             Q(device=device_id) &
             Q(os=obj.id)
         ).values_list('build_type__name', flat=True)
+        if build_types:
+            return build_types
+
+        # If there are no build types associated with the OS, use the first one
+        # (i.e. pk=1) by default.
+        return [BuildTypeName.objects.get(pk=1).name]
 
     class Meta:
         model = OS
