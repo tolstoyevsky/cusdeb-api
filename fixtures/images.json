@@ -21,6 +21,13 @@
   }
 },
 {
+  "model": "images.distroname",
+  "pk": 4,
+  "fields": {
+    "name": "Debian"
+  }
+},
+{
   "model": "images.codename",
   "pk": 1,
   "fields": {
@@ -31,7 +38,7 @@
   "model": "images.codename",
   "pk": 2,
   "fields": {
-    "name": "Stretch"
+    "name": "Buster"
   }
 },
 {
@@ -79,7 +86,7 @@
   "fields": {
     "name": 2,
     "codename": 2,
-    "version": "9",
+    "version": "10",
     "port": 1,
     "active": true
   }
@@ -118,10 +125,28 @@
   }
 },
 {
+  "model": "images.os",
+  "pk": 6,
+  "fields": {
+    "name": 4,
+    "codename": 2,
+    "version": "10",
+    "port": 1,
+    "active": true
+  }
+},
+{
   "model": "images.devicename",
   "pk": 1,
   "fields": {
     "name": "Raspberry Pi"
+  }
+},
+{
+  "model": "images.devicename",
+  "pk": 2,
+  "fields": {
+    "name": "Orange Pi"
   }
 },
 {
@@ -179,6 +204,45 @@
     "active": true,
     "supported_os": [
       2
+    ]
+  }
+},
+{
+  "model": "images.device",
+  "pk": 5,
+  "fields": {
+    "name": 1,
+    "generation": "4",
+    "model": "Model B",
+    "active": true,
+    "supported_os": [
+      2
+    ]
+  }
+},
+{
+  "model": "images.device",
+  "pk": 6,
+  "fields": {
+    "name": 2,
+    "generation": "",
+    "model": "Zero",
+    "active": true,
+    "supported_os": [
+      6
+    ]
+  }
+},
+{
+  "model": "images.device",
+  "pk": 7,
+  "fields": {
+    "name": 2,
+    "generation": "",
+    "model": "PC Plus",
+    "active": true,
+    "supported_os": [
+      6
     ]
   }
 },
