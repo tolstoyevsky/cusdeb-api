@@ -44,6 +44,11 @@ class DeviceSerializer(serializers.ModelSerializer):
 
 
 class ImageSerializer(serializers.ModelSerializer):
+    device = DeviceSerializer()
+    os = OSSerializer()
+    build_type = serializers.StringRelatedField()
+
     class Meta:
         model = Image
-        fields = ('name', )
+        fields = ('device', 'os', 'build_type', 'started_at', 'status',
+                  'format', 'finished_at', 'notes', )

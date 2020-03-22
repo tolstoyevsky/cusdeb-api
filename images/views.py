@@ -14,6 +14,9 @@ class ListDevicesView(generics.ListAPIView):
 
 
 class ListImagesView(generics.ListAPIView):
-    queryset = Image.objects.all()
     serializer_class = ImageSerializer
     permission_classes = (permissions.IsAuthenticated, )
+
+    def get_queryset(self):
+        user = self.request.user
+        return Image.objects.filter(user=user)
