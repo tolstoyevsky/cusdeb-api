@@ -25,13 +25,13 @@ class SignUpView(generics.CreateAPIView):
                 status=status.HTTP_400_BAD_REQUEST
             )
 
-        if User.objects.filter(username=username).exists():
+        if User.objects.filter(username__iexact=username).exists():
             return Response(
                 data={'message': 'username is already in use'},
                 status=status.HTTP_400_BAD_REQUEST
             )
 
-        if User.objects.filter(email=email).exists():
+        if User.objects.filter(email__iexact=email).exists():
             return Response(
                 data={'message': 'email is already in use'},
                 status=status.HTTP_400_BAD_REQUEST
