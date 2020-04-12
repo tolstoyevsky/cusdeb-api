@@ -46,8 +46,7 @@ class AuthSigningUpAndSigningInUserTest(BaseSingleUserTest):
     def test_creating_new_account_without_required_data(self):
         url = reverse('sign-up', kwargs={'version': 'v1'})
         error_message = {
-            'message': 'username, password and email are required to sign up '
-                       'a user'
+            'message': 'username, password and email are required to sign up a user',
         }
 
         user = {
