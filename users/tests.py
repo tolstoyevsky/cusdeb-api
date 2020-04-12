@@ -1,3 +1,5 @@
+"""Tests for the CusDeb API Users application. """
+
 import json
 
 from django.urls import reverse
@@ -116,9 +118,10 @@ class WhoAmIUserTest(BaseSingleUserTest):
         auth = self.client.post(url, data=json.dumps(self._user),
                                 content_type='application/json')
 
-        self.fake_header = b'Bearer ' + json.loads(auth.content)['access'].encode()
+        fake_header = b'Bearer ' + json.loads(auth.content)['access'].encode()
         url = reverse('who-am-i', kwargs={'version': 'v1'})
-        response = self.client.get(url, content_type='application/json', HTTP_AUTHORIZATION= self.fake_header)
+        response = self.client.get(url, content_type='application/json',
+                                   HTTP_AUTHORIZATION=fake_header)
 
         self.assertEqual(response.content, b'{"username":"test.user"}')
 

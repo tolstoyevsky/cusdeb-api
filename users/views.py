@@ -1,3 +1,5 @@
+"""Module containing the class-based views related to creating and managing accounts in CusDeb. """
+
 from django.contrib.auth.models import User
 from rest_framework import generics
 from rest_framework import permissions
@@ -8,9 +10,8 @@ from .serializers import CurrentUserSerializer
 
 
 class SignUpView(generics.CreateAPIView):
-    """
-    POST auth/signup/
-    """
+    """Creates a User model instance. """
+
     permission_classes = (permissions.AllowAny, )
 
     def post(self, request, *args, **kwargs):
@@ -44,9 +45,8 @@ class SignUpView(generics.CreateAPIView):
 
 
 class WhoAmIView(generics.RetrieveAPIView):
-    """
-    GET users/whoami/
-    """
+    """Returns the name of the authenticated user the request is sent on behalf of. """
+
     queryset = User.objects.all()
     serializer_class = CurrentUserSerializer
     permission_classes = (permissions.IsAuthenticated,)

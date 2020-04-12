@@ -1,3 +1,7 @@
+"""
+URL configuration for the CusDeb API Users application (fetching user-specific information only).
+"""
+
 from django.urls import re_path
 
 from .views import WhoAmIView

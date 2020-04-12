@@ -1,8 +1,12 @@
+"""Data models for the CusDeb API Images application. """
+
 from django.db import models
 from django.contrib.auth.models import User
 
 
 class DistroName(models.Model):
+    """Distribution name (i.e. Debian, Devuan, Kali, Raspbian, Ubuntu). """
+
     name = models.CharField(max_length=255)
 
     def __str__(self):
@@ -10,6 +14,8 @@ class DistroName(models.Model):
 
 
 class CodeName(models.Model):
+    """Distribution code name. """
+
     name = models.CharField(max_length=255)
 
     def __str__(self):
@@ -17,6 +23,8 @@ class CodeName(models.Model):
 
 
 class Port(models.Model):
+    """Operating system port name (i.e. armhf, arm64). """
+
     name = models.CharField(max_length=32)
 
     def __str__(self):
@@ -24,6 +32,8 @@ class Port(models.Model):
 
 
 class OS(models.Model):
+    """Model representing an operation system supported by CusDeb. """
+
     name = models.ForeignKey(DistroName, models.PROTECT)
     codename = models.ForeignKey(CodeName, models.PROTECT)
     # Version can be 1, 10, 18.04, 2019.01, etc.
@@ -38,6 +48,8 @@ class OS(models.Model):
 
 
 class DeviceName(models.Model):
+    """Device name (i.e. Raspberry Pi, Orange Pi). """
+
     name = models.CharField(max_length=32)
 
     def __str__(self):
@@ -45,6 +57,8 @@ class DeviceName(models.Model):
 
 
 class Device(models.Model):
+    """Model representing a device supported by CusDeb. """
+
     name = models.ForeignKey(DeviceName, models.PROTECT)
     generation = models.CharField(max_length=32, blank=True)
     model = models.CharField(max_length=255)
@@ -59,6 +73,8 @@ class Device(models.Model):
 
 
 class BuildTypeName(models.Model):
+    """Build type name (i.e. Classic image, Mender-compatible image, Mender artifact). """
+
     name = models.CharField(max_length=32)
 
     def __str__(self):
@@ -66,6 +82,8 @@ class BuildTypeName(models.Model):
 
 
 class BuildType(models.Model):
+    """Model representing a build type supported by CusDeb. """
+
     device = models.ForeignKey(Device, models.CASCADE)
     os = models.ForeignKey(OS, models.PROTECT)
     build_type = models.ManyToManyField(BuildTypeName)
@@ -78,6 +96,8 @@ class BuildType(models.Model):
 
 
 class Image(models.Model):
+    """Model representing an image built by CusDeb. """
+
     PENDING = 'pending'
     BUILDING = 'building'
     FAILED = 'failed'
