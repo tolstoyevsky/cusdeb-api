@@ -44,11 +44,9 @@ class InitStageTest(BaseSingleUserTest):
 
         rpi = DeviceName.objects.create(name='Raspberry Pi')
         opi = DeviceName.objects.create(name='Orange Pi')
-        dev1 = Device.objects.create(name=rpi, generation='3', model='Model B',
-                                     active=True)
+        dev1 = Device.objects.create(name=rpi, generation='3', model='Model B', active=True)
         dev1.supported_os.add(debian_buster, ubuntu_bionic)
-        dev2 = Device.objects.create(name=opi, generation='', model='PC Plus',
-                                     active=False)
+        dev2 = Device.objects.create(name=opi, generation='', model='PC Plus', active=False)
         dev2.supported_os.add(debian_buster, ubuntu_bionic)
 
         #

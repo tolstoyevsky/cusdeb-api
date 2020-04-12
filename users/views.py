@@ -21,8 +21,7 @@ class SignUpView(generics.CreateAPIView):
 
         if not username or not password or not email:
             return Response(
-                data={'message': 'username, password and email are required '
-                                 'to sign up a user'},
+                data={'message': 'username, password and email are required to sign up a user'},
                 status=status.HTTP_400_BAD_REQUEST
             )
 
@@ -38,8 +37,7 @@ class SignUpView(generics.CreateAPIView):
                 status=status.HTTP_400_BAD_REQUEST
             )
 
-        User.objects.create_user(username=username, password=password,
-                                 email=email)
+        User.objects.create_user(username=username, password=password, email=email)
 
         return Response(status=status.HTTP_201_CREATED)
 

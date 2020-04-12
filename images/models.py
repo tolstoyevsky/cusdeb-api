@@ -43,8 +43,7 @@ class OS(models.Model):
     active = models.BooleanField(default=False)
 
     def __str__(self):
-        return '{} {} "{}" ({})'.format(self.name, self.version, self.codename,
-                                        self.port)
+        return '{} {} "{}" ({})'.format(self.name, self.version, self.codename, self.port)
 
 
 class DeviceName(models.Model):

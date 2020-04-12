@@ -44,9 +44,7 @@ class DeviceSerializer(serializers.ModelSerializer):
         """Returns the list of OSes available for the device. """
 
         queryset = obj.supported_os.all()
-        return OSSerializer(queryset, many=True, context={
-            'device_id': obj.id,
-        }).data
+        return OSSerializer(queryset, many=True, context={'device_id': obj.id}).data
 
     class Meta:
         model = Device
