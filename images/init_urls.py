@@ -1,3 +1,7 @@
+"""URL configuration for the CusDeb API Images application (the part related to the initialization
+step only).
+"""
+
 from django.urls import re_path
 
 from .views import ListDevicesView

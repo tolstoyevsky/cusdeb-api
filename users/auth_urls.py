@@ -1,3 +1,5 @@
+"""URL configuration for the CusDeb API Users application. """
+
 from django.urls import re_path
 from rest_framework_simplejwt.views import (
     TokenObtainPairView,

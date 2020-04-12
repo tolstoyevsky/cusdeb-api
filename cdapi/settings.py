@@ -158,4 +158,3 @@ STATIC_URL = '/static/'
 AUTHENTICATION_BACKENDS = (
     'users.backend.CaseInsensitiveModelBackend',
 )
-
