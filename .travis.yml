@@ -8,6 +8,9 @@ addons:
     sources:
     - debian-sid
 
+services:
+  - postgresql
+
 install:
   - pip install -r requirements.txt
   - pip install pylint pylint-django
@@ -15,3 +18,4 @@ install:
 script:
   # By default max-line-length is 100, but specify it explicitly.
   - find -name "*.py" -not -path "./.git/*" -not -path "*/migrations/*" ! -name "tests.py" | xargs pylint --max-line-length=100 --load-plugins=pylint_django
+  - env PG_PORT=5432 SECRET_KEY=secret python3 manage.py test
