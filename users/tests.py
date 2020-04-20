@@ -9,6 +9,8 @@ from util.base_test import BaseSingleUserTest
 
 
 class AuthSigningUpAndSigningInUserTest(BaseSingleUserTest):
+    """Tests signing up/in. """
+
     def test_creating_new_account(self):
         url = reverse('sign-up', kwargs={'version': 'v1'})
         user = {
@@ -112,6 +114,8 @@ class AuthSigningUpAndSigningInUserTest(BaseSingleUserTest):
 
 
 class WhoAmIUserTest(BaseSingleUserTest):
+    """Tests the whoami endpoint. """
+
     def test_whoami(self):
         url = reverse('token-obtain-pair', kwargs={'version': 'v1'})
         auth = self.client.post(url, data=json.dumps(self._user),
