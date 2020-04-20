@@ -1,3 +1,5 @@
+"""Tests the CusDeb API Images application. """
+
 import json
 
 from django.urls import reverse
@@ -17,6 +19,8 @@ from util.base_test import BaseSingleUserTest
 
 
 class InitStageTest(BaseSingleUserTest):
+    """Tests various functionalities related to the initialization stage. """
+
     def setUp(self):
         super().setUp()
 
