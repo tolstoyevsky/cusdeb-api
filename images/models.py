@@ -42,8 +42,16 @@ class OS(models.Model):
     port = models.ForeignKey(Port, models.PROTECT)
     active = models.BooleanField(default=False)
 
+    def get_short_name(self):
+        """Gets the short name of the operating system intended for Pieman. """
+
+        name = str(self.name).lower()
+        codename = str(self.codename).split(' ')[0].lower()  # "Bionic Beaver" -> "bionic"
+        return f'{name}-{codename}-{self.port}'
+
     def __str__(self):
-        return '{} {} "{}" ({})'.format(self.name, self.version, self.codename, self.port)
+        port = '64-bit' if str(self.port) == 'arm64' else '32-bit'
+        return '{} {} "{}" ({})'.format(self.name, self.version, self.codename, port)
 
 
 class DeviceName(models.Model):
