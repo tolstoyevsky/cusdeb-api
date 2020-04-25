@@ -9,9 +9,8 @@ from .models import Device, Image, OS, BuildType, BuildTypeName
 class OSSerializer(serializers.ModelSerializer):
     """Serializes an OS. """
 
-    name = serializers.StringRelatedField()
-    codename = serializers.StringRelatedField()
-    port = serializers.StringRelatedField()
+    full_name = serializers.SerializerMethodField()
+    short_name = serializers.SerializerMethodField()
     build_type = serializers.SerializerMethodField()
 
     def get_build_type(self, obj):
@@ -29,9 +28,19 @@ class OSSerializer(serializers.ModelSerializer):
         # (i.e. pk=1) by default.
         return [BuildTypeName.objects.get(pk=1).name]
 
+    def get_full_name(self, obj):  # pylint: disable=no-self-use
+        """Returns the full name of the operating system intended for a client. """
+
+        return str(OS.objects.get(pk=obj.id))
+
+    def get_short_name(self, obj):  # pylint: disable=no-self-use
+        """Returns the short name of the operating system intended for Pieman. """
+
+        return str(OS.objects.get(pk=obj.id).get_short_name())
+
     class Meta:
         model = OS
-        fields = ('id', 'name', 'codename', 'version', 'port', 'build_type', )
+        fields = ('id', 'full_name', 'short_name', 'build_type', )
 
 
 class DeviceSerializer(serializers.ModelSerializer):

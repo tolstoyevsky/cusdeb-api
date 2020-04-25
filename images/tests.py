@@ -84,17 +84,13 @@ class InitStageTest(BaseSingleUserTest):
             "os": [
                 {
                     "id": 1,
-                    "name": "Debian",
-                    "codename": "Buster",
-                    "version": "10",
-                    "port": "armhf",
+                    "full_name": 'Debian 10 "Buster" (32-bit)',
+                    "short_name": "debian-buster-armhf",
                     "build_type": ["Classic image"]
                 }, {
                     "id": 2,
-                    "name": "Ubuntu",
-                    "codename": "Bionic Beaver",
-                    "version": "18.04",
-                    "port": "armhf",
+                    "full_name": 'Ubuntu 18.04 "Bionic Beaver" (32-bit)',
+                    "short_name": "ubuntu-bionic-armhf",
                     "build_type": ["Classic image"]
                 }
             ]
