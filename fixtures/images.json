@@ -77,7 +77,8 @@
     "codename": 1,
     "version": "1",
     "port": 1,
-    "active": true
+    "active": true,
+    "packages_url": "https://pkginfo.devuan.org/stage/jessie/jessie/"
   }
 },
 {
@@ -99,7 +100,8 @@
     "codename": 3,
     "version": "16.04",
     "port": 1,
-    "active": true
+    "active": true,
+    "packages_url": "https://packages.ubuntu.com/xenial/"
   }
 },
 {
@@ -110,7 +112,8 @@
     "codename": 4,
     "version": "18.04",
     "port": 1,
-    "active": true
+    "active": true,
+    "packages_url": "https://packages.ubuntu.com/bionic/"
   }
 },
 {
@@ -121,7 +124,8 @@
     "codename": 4,
     "version": "18.04",
     "port": 2,
-    "active": true
+    "active": true,
+    "packages_url": "https://packages.ubuntu.com/bionic/"
   }
 },
 {
@@ -132,7 +136,8 @@
     "codename": 2,
     "version": "10",
     "port": 1,
-    "active": true
+    "active": true,
+    "packages_url": "https://packages.debian.org/buster/"
   }
 },
 {
