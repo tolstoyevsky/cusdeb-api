@@ -37,9 +37,12 @@ class InitStageTest(BaseSingleUserTest):
         port = Port.objects.create(name='armhf')
 
         debian_buster = OS.objects.create(name=debian, codename=buster,
-                                          version='10', port=port, active=True)
+                                          version='10', port=port,
+                                          packages_url="https://packages.debian.org/buster/",
+                                          active=True)
         ubuntu_bionic = OS.objects.create(name=ubuntu, codename=bionic,
                                           version='18.04', port=port,
+                                          packages_url="https://packages.ubuntu.com/bionic/",
                                           active=True)
 
         #
@@ -86,12 +89,14 @@ class InitStageTest(BaseSingleUserTest):
                     "id": 1,
                     "full_name": 'Debian 10 "Buster" (32-bit)',
                     "short_name": "debian-buster-armhf",
-                    "build_type": ["Classic image"]
+                    "build_type": ["Classic image"],
+                    "packages_url": "https://packages.debian.org/buster/"
                 }, {
                     "id": 2,
                     "full_name": 'Ubuntu 18.04 "Bionic Beaver" (32-bit)',
                     "short_name": "ubuntu-bionic-armhf",
-                    "build_type": ["Classic image"]
+                    "build_type": ["Classic image"],
+                    "packages_url": "https://packages.ubuntu.com/bionic/"
                 }
             ]
         }]
