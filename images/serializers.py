@@ -11,6 +11,7 @@ class OSSerializer(serializers.ModelSerializer):
 
     full_name = serializers.SerializerMethodField()
     short_name = serializers.SerializerMethodField()
+    packages_url = serializers.StringRelatedField()
     build_type = serializers.SerializerMethodField()
 
     def get_build_type(self, obj):
@@ -40,7 +41,7 @@ class OSSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = OS
-        fields = ('id', 'full_name', 'short_name', 'build_type', )
+        fields = ('id', 'full_name', 'short_name', 'build_type', 'packages_url', )
 
 
 class DeviceSerializer(serializers.ModelSerializer):

@@ -40,6 +40,7 @@ class OS(models.Model):
     # 32 characters should be enough to store any exotic verison.
     version = models.CharField(max_length=32)
     port = models.ForeignKey(Port, models.PROTECT)
+    packages_url = models.CharField(max_length=64, blank=True)
     active = models.BooleanField(default=False)
 
     def get_short_name(self):
