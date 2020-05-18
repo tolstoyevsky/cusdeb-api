@@ -33,22 +33,26 @@ class SignUpView(generics.CreateAPIView):
         username = request.data.get('username', '')
         password = request.data.get('password', '')
         email = request.data.get('email', '')
+        data = {}
 
-        if not username or not password or not email:
-            return Response(
-                data={'message': 'username, password and email are required to sign up a user'},
-                status=status.HTTP_400_BAD_REQUEST
-            )
+        if not username:
+            data[11] = 'Username cannot be empty'
+
+        if not password:
+            data[12] = 'Password cannot be empty'
+
+        if not email:
+            data[13] = 'Email cannot be empty'
 
         if User.objects.filter(username__iexact=username).exists():
-            return Response(
-                data={'message': 'username is already in use'},
-                status=status.HTTP_400_BAD_REQUEST
-            )
+            data[21] = 'Username is already in use'
 
         if User.objects.filter(email__iexact=email).exists():
+            data[22] = 'Email is already in use'
+
+        if data:
             return Response(
-                data={'message': 'email is already in use'},
+                data=data,
                 status=status.HTTP_400_BAD_REQUEST
             )
 
