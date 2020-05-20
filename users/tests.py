@@ -26,7 +26,10 @@ class AuthSigningUpAndSigningInUserTest(BaseSingleUserTest):
 
     def test_creating_new_account_with_already_taken_username(self):
         url = reverse('sign-up', kwargs={'version': 'v1'})
-        error_message = {'message': 'username is already in use'}
+        error_message = {
+            21: 'Username is already in use',
+            22: 'Email is already in use',
+        }
         response = self.client.post(url, data=json.dumps(self._user),
                                     content_type='application/json')
 
@@ -35,7 +38,7 @@ class AuthSigningUpAndSigningInUserTest(BaseSingleUserTest):
 
     def test_creating_new_account_with_already_taken_email(self):
         url = reverse('sign-up', kwargs={'version': 'v1'})
-        error_message = {'message': 'email is already in use'}
+        error_message = {22: 'Email is already in use'}
         user = self._user.copy()
         user['username'] = 'some.unique.username'
 
@@ -47,42 +50,50 @@ class AuthSigningUpAndSigningInUserTest(BaseSingleUserTest):
 
     def test_creating_new_account_without_required_data(self):
         url = reverse('sign-up', kwargs={'version': 'v1'})
+        error_message = {13: 'Email cannot be empty'}
+
+        user = {
+            'username': 'some.username',
+            'password': 'secret',
+        }
+
+        response = self.client.post(url, data=json.dumps(user),
+                                    content_type='application/json')
+
+        self.assertEqual(response.data, error_message)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+        error_message = {12: 'Password cannot be empty'}
+
+        user = {
+            'username': 'some.username',
+            'email': 'some.username@domain.com',
+        }
+
+        response = self.client.post(url, data=json.dumps(user),
+                                    content_type='application/json')
+
+        self.assertEqual(response.data, error_message)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+        error_message = {11: 'Username cannot be empty'}
+
+        user = {
+            'password': 'secret',
+            'email': 'some.username@domain.com',
+        }
+
+        response = self.client.post(url, data=json.dumps(user),
+                                    content_type='application/json')
+
+        self.assertEqual(response.data, error_message)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
         error_message = {
-            'message': 'username, password and email are required to sign up a user',
+            11: 'Username cannot be empty',
+            12: 'Password cannot be empty',
+            13: 'Email cannot be empty',
         }
-
-        user = {
-            'username': 'some.username',
-            'password': 'secret',
-        }
-
-        response = self.client.post(url, data=json.dumps(user),
-                                    content_type='application/json')
-
-        self.assertEqual(response.data, error_message)
-        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-
-        user = {
-            'username': 'some.username',
-            'email': 'some.username@domain.com',
-        }
-
-        response = self.client.post(url, data=json.dumps(user),
-                                    content_type='application/json')
-
-        self.assertEqual(response.data, error_message)
-        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-
-        user = {
-            'password': 'secret',
-            'email': 'some.username@domain.com',
-        }
-
-        response = self.client.post(url, data=json.dumps(user),
-                                    content_type='application/json')
-
-        self.assertEqual(response.data, error_message)
-        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
         response = self.client.post(url, data=json.dumps({}),
                                     content_type='application/json')
