@@ -57,9 +57,11 @@ Creates a new user account.
 * **Error Response**
   * **Code:** 400
   * **Content:**
-    * `{"message": "username, password and email are required to sign up a user"}`
-    * `{"message": "username is already in use"}`
-    * `{"message": "email is already in use"}`
+    * `{"11": "Username cannot be empty"}`
+    * `{"12": "Password cannot be empty"}`
+    * `{"13": "Email cannot be empty"}`
+    * `{"21": "Username is already in use"}`
+    * `{"22": "Email is already in use"}`
 * **Sample Call:**
 
   `$ curl -L -X POST http://127.0.0.1:8001/api/v1/auth/signup/ -d "username=some.user&password=secret&email=some.user@example.com"`
