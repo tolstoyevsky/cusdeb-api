@@ -2,13 +2,16 @@
 
 from urllib.parse import urljoin
 
+from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.conf import settings
+from django.contrib.auth.models import User
 from django.core.mail import EmailMultiAlternatives
 from django.template.loader import render_to_string
 
 from django_rest_passwordreset.models import get_password_reset_token_expiry_time
 from django_rest_passwordreset.signals import reset_password_token_created
+from users.models import Person, EmailConfirmationToken, get_email_confirmation_token_expiry_time
 
 
 @receiver(reset_password_token_created)
@@ -45,3 +48,43 @@ def password_reset_token_created(
     )
     msg.attach_alternative(email_html_message, 'text/html')
     msg.send()
+
+
+@receiver(post_save, sender=User)
+def create_person(sender,  # pylint: disable=unused-argument
+                  instance, created, **kwargs):
+    """Create person and send message with link for confirmation email after create user. """
+
+    if created:
+        # pylint: disable=no-member
+        Person.objects.create(user=instance)
+        EmailConfirmationToken.objects.create(person=instance.person)
+
+        context = {
+            'current_user': instance,
+            'username': instance.username,
+            'email': instance.email,
+            'confirm_email_url': f'{settings.BASE_SITE_URL}/email_verification/?token='
+                                 f'{instance.person.emailconfirmationtoken.key}',
+            'base_site_url': f'{settings.BASE_SITE_URL}',
+            'site_name': f'{settings.DEFAULT_SITE_NAME}',
+            'token_expiry_time': get_email_confirmation_token_expiry_time(),
+        }
+
+        # render email text
+        email_html_message = render_to_string('email/confirm_email.html', context)
+        email_plaintext_message = render_to_string('email/confirm_email.txt', context)
+
+        msg = EmailMultiAlternatives(
+            subject=f'Confirm email for {settings.DEFAULT_SITE_NAME}',
+            body=email_plaintext_message,
+            from_email=settings.DEFAULT_FROM_EMAIL,
+            bcc=[instance.email],
+            headers={
+                'From': f'{settings.DEFAULT_SITE_NAME} <{settings.DEFAULT_FROM_EMAIL}>',
+                'To': instance.email,
+            }
+        )
+
+        msg.attach_alternative(email_html_message, 'text/html')
+        msg.send()
