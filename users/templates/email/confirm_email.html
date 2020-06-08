@@ -1,0 +1,9 @@
+<p>Hello!</p>
+<p>
+    Today, {{ username }} registration was made on the site <a href="{{ base_site_url }}" target="_blank">{{ site_name }}</a>
+    using Your email address.
+    If it was You, please confirm your email address by following this link:
+    <a href="{{ confirm_email_url }}">{{ confirm_email_url }}</a>
+</p>
+<p>This link will expire in {{ token_expiry_time }} hours.</p>
+<p>If you do not create account, just ignore this message.</p>

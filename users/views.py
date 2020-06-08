@@ -1,22 +1,26 @@
 """Module containing the class-based views related to creating and managing accounts in CusDeb. """
+from datetime import timedelta
 
 from django.conf import settings
 from django.contrib.auth import REDIRECT_FIELD_NAME
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.http import JsonResponse
+from django.utils import timezone
 from django.views import View
 from django.views.decorators.csrf import csrf_exempt, csrf_protect
 from django.views.decorators.http import require_POST
 from django.views.decorators.cache import never_cache
 from rest_framework import generics
 from rest_framework import permissions
+from rest_framework.generics import GenericAPIView
 from rest_framework.response import Response
 from rest_framework.views import status
 from social_core.actions import do_auth, do_complete, do_disconnect
 from social_core.utils import setting_name
 from social_django.views import _do_login
 
+from .models import clear_expired, EmailConfirmationToken, get_email_confirmation_token_expiry_time
 from .serializers import (
     CurrentUserSerializer,
     SocialTokenObtainPairSerializer,
@@ -76,6 +80,34 @@ class WhoAmIView(generics.RetrieveAPIView):
 
     def get_object(self):
         return self.request.user
+
+
+class EmailVerification(GenericAPIView):
+    """Activates user account and clears all tokens expired. """
+
+    permission_classes = (permissions.AllowAny, )
+
+    def post(self, request,  # pylint: disable=unused-argument
+             *args, **kwargs):
+        """POST"""
+
+        # datetime.now minus expiry hours
+        now_minus_expiry_time = timezone.now() - \
+                                timedelta(hours=get_email_confirmation_token_expiry_time())
+
+        # delete all tokens where created_at < now - 24 hours
+        clear_expired(now_minus_expiry_time)
+
+        try:
+            token = EmailConfirmationToken.objects.get(key=request.data.get('token', ''))
+        except EmailConfirmationToken.DoesNotExist:
+            return Response(status=status.HTTP_400_BAD_REQUEST)
+
+        token.person.email_confirmed = True
+        token.person.save(update_fields=['email_confirmed'])
+        token.delete()
+
+        return Response(status=status.HTTP_201_CREATED)
 
 
 class GetTokenForSocial(View):
