@@ -72,7 +72,9 @@ class GetTokenForSocial(View):
     """
     GET auth/token/social/'
     """
-    def get(self, request, *args, **kwargs):
+
+    def get(self, request, *_args, **_kwargs):
+        """GET-method for getting social token. """
         serializer = SocialTokenObtainPairSerializer(
             data={'username': request.user.username}
         )

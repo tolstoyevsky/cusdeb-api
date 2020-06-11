@@ -18,7 +18,7 @@ class CurrentUserSerializer(serializers.ModelSerializer):
         fields = ('username', )
 
 
-class SocialTokenObtainPairSerializer(serializers.Serializer):
+class SocialTokenObtainPairSerializer(serializers.Serializer):  # pylint: disable=abstract-method
     """Serializes the token data for social user. """
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -40,7 +40,7 @@ class SocialTokenObtainPairSerializer(serializers.Serializer):
         refresh = RefreshToken.for_user(self.user)
 
         data['refresh'] = str(refresh)
-        data['access'] = str(refresh.access_token)
+        data['access'] = str(refresh.access_token)  #pylint: disable=no-member
 
         data.pop('username')
 
