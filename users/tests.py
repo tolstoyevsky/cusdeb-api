@@ -15,7 +15,7 @@ class AuthSigningUpAndSigningInUserTest(BaseSingleUserTest):
         url = reverse('sign-up', kwargs={'version': 'v1'})
         user = {
             'username': 'some.username',
-            'password': 'secret',
+            'password': 'xXSecret1Xx',
             'email': 'some.username@domain.com',
         }
 
@@ -54,7 +54,7 @@ class AuthSigningUpAndSigningInUserTest(BaseSingleUserTest):
 
         user = {
             'username': 'some.username',
-            'password': 'secret',
+            'password': 'xXSecret1Xx',
         }
 
         response = self.client.post(url, data=json.dumps(user),
@@ -63,7 +63,10 @@ class AuthSigningUpAndSigningInUserTest(BaseSingleUserTest):
         self.assertEqual(response.data, error_message)
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
-        error_message = {12: 'Password cannot be empty'}
+        error_message = {
+            12: 'Password cannot be empty',
+            31: ['This password is too short. It must contain at least 8 characters.']
+        }
 
         user = {
             'username': 'some.username',
@@ -79,7 +82,7 @@ class AuthSigningUpAndSigningInUserTest(BaseSingleUserTest):
         error_message = {11: 'Username cannot be empty'}
 
         user = {
-            'password': 'secret',
+            'password': 'xXSecret1Xx',
             'email': 'some.username@domain.com',
         }
 
@@ -93,6 +96,7 @@ class AuthSigningUpAndSigningInUserTest(BaseSingleUserTest):
             11: 'Username cannot be empty',
             12: 'Password cannot be empty',
             13: 'Email cannot be empty',
+            31: ['This password is too short. It must contain at least 8 characters.']
         }
 
         response = self.client.post(url, data=json.dumps({}),
