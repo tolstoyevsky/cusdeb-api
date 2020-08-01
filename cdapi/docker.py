@@ -9,7 +9,7 @@ from datetime import timedelta
 
 from cdapi.settings import *  # pylint: disable=unused-wildcard-import,wildcard-import
 
-ALLOWED_HOSTS = [os.getenv('ALLOWED_HOSTS', '127.0.0.1')]
+ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', '127.0.0.1').split(',')
 
 DEBUG = os.getenv('DEBUG', '').lower() == 'true'
 
