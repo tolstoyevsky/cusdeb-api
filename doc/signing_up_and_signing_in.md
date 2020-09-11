@@ -24,7 +24,7 @@ The access and refresh tokens are the [JSON Web Tokens](https://jwt.io) (JWT). B
 
 * `token_type` is a token type as it's seen from the name of the field. It accepts one of the following values: `'access'` or `'refresh'`.
 * `exp` is an expiration date. It accepts integer numbers known as Unix timestamps.
-* `jti` is a JWT ID (see [Section 4.1.7](https://tools.ietf.org/html/rfc7519#page-10) of RFC 7519). It accepts random strings (MD5 hashes).
+* `jti` is a JWT ID (see [Section 4.1.7](https://tools.ietf.org/html/rfc7519#page-10) of RFC 7519).
 * `user_id` is a user id. It accepts integer numbers.
 
 The secret key stored in `SECRET_KEY` (located in the `docker.py`) module is used to implement encoding and decoding the payload.
