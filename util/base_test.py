@@ -8,7 +8,7 @@ class BaseSingleUserTest(APITestCase):
     """Base class for the tests that need to have a user created before running. """
 
     def __init__(self, *args, **kwargs):
-        super(BaseSingleUserTest, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self._user = {
             'username': 'test.user',
             'password': 'secret',
