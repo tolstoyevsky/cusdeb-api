@@ -17,7 +17,11 @@ from social_core.actions import do_auth, do_complete, do_disconnect
 from social_core.utils import setting_name
 from social_django.views import _do_login
 
-from .serializers import CurrentUserSerializer, SocialTokenObtainPairSerializer
+from .serializers import (
+    CurrentUserSerializer,
+    SocialTokenObtainPairSerializer,
+    UserLoginUpdateSerializer,
+)
 from .utils import psa
 
 
@@ -85,6 +89,30 @@ class GetTokenForSocial(View):
         if serializer.is_valid():
             return JsonResponse(serializer.validated_data, status=200)
         return JsonResponse(serializer.errors, status=400)
+
+
+class UserLoginUpdate(generics.CreateAPIView):
+    """Update the current user login (either username or password). """
+
+    permission_classes = (permissions.IsAuthenticated, )
+
+    def post(self, request, *args, **kwargs):
+        username = request.data.get('username', '')
+        email = request.data.get('email', '')
+
+        serializer = UserLoginUpdateSerializer(
+            data={'username': username, 'email': email},
+            current_user_id=request.user.id,
+        )
+
+        if serializer.is_valid():
+            request.user.username = serializer.validated_data['username']
+            request.user.email = serializer.validated_data['email']
+            request.user.save(update_fields=['username', 'email'])
+
+            return Response(status=status.HTTP_200_OK)
+
+        return JsonResponse(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 @never_cache

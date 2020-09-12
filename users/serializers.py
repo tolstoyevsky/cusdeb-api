@@ -45,3 +45,34 @@ class SocialTokenObtainPairSerializer(serializers.Serializer):  # pylint: disabl
         data.pop('username')
 
         return data
+
+
+class UserLoginUpdateSerializer(serializers.Serializer):  # pylint: disable=abstract-method
+    """Serializes both the username and password provided by the current user to update their
+    login (either username or email).
+    """
+
+    username = serializers.CharField()
+    email = serializers.EmailField()
+
+    def __init__(self, *args, **kwargs):
+        current_user_id = kwargs.pop('current_user_id')
+        self.users = User.objects.exclude(id=current_user_id)
+
+        super().__init__(*args, **kwargs)
+
+    def validate_username(self, value):
+        """Validates the username of the current user. """
+
+        if self.users.filter(username__iexact=value).exists():
+            raise serializers.ValidationError('Username is already in use.')
+
+        return value
+
+    def validate_email(self, value):
+        """Validates the email of the current user. """
+
+        if self.users.filter(email__iexact=value).exists():
+            raise serializers.ValidationError('Email is already in use.')
+
+        return value
