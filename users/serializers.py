@@ -15,7 +15,7 @@ class CurrentUserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ('username', )
+        fields = ('username', 'email', )
 
 
 class SocialTokenObtainPairSerializer(serializers.Serializer):  # pylint: disable=abstract-method
