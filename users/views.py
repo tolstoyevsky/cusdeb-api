@@ -21,6 +21,7 @@ from .serializers import (
     CurrentUserSerializer,
     SocialTokenObtainPairSerializer,
     UserLoginUpdateSerializer,
+    UserProfileDeleteSerializer,
 )
 from .utils import psa
 
@@ -109,6 +110,28 @@ class UserLoginUpdate(generics.CreateAPIView):
             request.user.username = serializer.validated_data['username']
             request.user.email = serializer.validated_data['email']
             request.user.save(update_fields=['username', 'email'])
+
+            return Response(status=status.HTTP_200_OK)
+
+        return JsonResponse(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class UserProfileDelete(generics.CreateAPIView):
+    """Delete the current user profile. """
+
+    permission_classes = (permissions.IsAuthenticated, )
+
+    def post(self, request, *args, **kwargs):
+        username = request.data.get('username', '')
+        password = request.data.get('password', '')
+
+        serializer = UserProfileDeleteSerializer(
+            data={'username': username, 'password': password},
+            current_user=request.user,
+        )
+
+        if serializer.is_valid():
+            request.user.delete()
 
             return Response(status=status.HTTP_200_OK)
 

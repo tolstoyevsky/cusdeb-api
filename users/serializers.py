@@ -76,3 +76,33 @@ class UserLoginUpdateSerializer(serializers.Serializer):  # pylint: disable=abst
             raise serializers.ValidationError('Email is already in use.')
 
         return value
+
+
+class UserProfileDeleteSerializer(serializers.Serializer):  # pylint: disable=abstract-method
+    """Serializes both the username and password provided by the current user to delete their
+    profile. The user must confirm the deletion by typing their username and password.
+    """
+
+    username = serializers.CharField()
+    password = serializers.CharField()
+
+    def __init__(self, *args, **kwargs):
+        self.user = kwargs.pop('current_user')
+
+        super().__init__(*args, **kwargs)
+
+    def validate_username(self, value):
+        """Validates the username of the current user. """
+
+        if self.user.username != value:
+            raise serializers.ValidationError('Username mismatch.')
+
+        return value
+
+    def validate_password(self, value):
+        """Validates the password of the current user. """
+
+        if not self.user.check_password(value):
+            raise serializers.ValidationError('Incorrect password.')
+
+        return value
