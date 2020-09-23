@@ -20,6 +20,7 @@ from social_django.views import _do_login
 from .serializers import (
     CurrentUserSerializer,
     SocialTokenObtainPairSerializer,
+    PasswordUpdateSerializer,
     UserLoginUpdateSerializer,
     UserProfileDeleteSerializer,
 )
@@ -90,6 +91,34 @@ class GetTokenForSocial(View):
         if serializer.is_valid():
             return JsonResponse(serializer.validated_data, status=200)
         return JsonResponse(serializer.errors, status=400)
+
+
+class PasswordUpdate(generics.CreateAPIView):
+    """Update the current user password. """
+
+    permission_classes = (permissions.IsAuthenticated, )
+
+    def post(self, request, *args, **kwargs):
+        old_password = request.data.get('old_password', '')
+        password = request.data.get('password', '')
+        retype_password = request.data.get('retype_password', '')
+
+        serializer = PasswordUpdateSerializer(
+            data={
+                'old_password': old_password,
+                'password': password,
+                'retype_password': retype_password,
+            },
+            current_user=request.user,
+        )
+
+        if serializer.is_valid():
+            request.user.set_password(serializer.validated_data['password'])
+            request.user.save()
+
+            return Response(status=status.HTTP_200_OK)
+
+        return JsonResponse(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 class UserLoginUpdate(generics.CreateAPIView):

@@ -1,6 +1,8 @@
 """Module containing serializers for the CusDeb API Users application. """
 
+from django.core.exceptions import ValidationError
 from django.contrib.auth.models import User
+from django.contrib.auth.password_validation import validate_password
 from rest_framework import serializers
 from rest_framework_simplejwt.tokens import RefreshToken
 
@@ -45,6 +47,42 @@ class SocialTokenObtainPairSerializer(serializers.Serializer):  # pylint: disabl
         data.pop('username')
 
         return data
+
+
+class PasswordUpdateSerializer(serializers.Serializer):  # pylint: disable=abstract-method
+    """Serializes both the old and new passwords provided by the current user to change their
+    password.
+    """
+
+    old_password = serializers.CharField()
+    password = serializers.CharField()
+    retype_password = serializers.CharField()
+
+    def __init__(self, *args, **kwargs):
+        self.user = kwargs.pop('current_user')
+
+        super().__init__(*args, **kwargs)
+
+    def validate_old_password(self, value):
+        """Validates the old password of the current user. """
+
+        if not self.user.check_password(value):
+            raise serializers.ValidationError('Incorrect old password.')
+
+        return value
+
+    def validate_password(self, value):
+        """Validates the new password of the current user. """
+
+        if value != self.initial_data['retype_password']:
+            raise serializers.ValidationError('Passwords mismatch.')
+
+        try:
+            validate_password(value)
+        except ValidationError as err:
+            raise serializers.ValidationError(err.messages)
+
+        return value
 
 
 class UserLoginUpdateSerializer(serializers.Serializer):  # pylint: disable=abstract-method
