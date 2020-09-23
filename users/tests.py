@@ -129,6 +129,7 @@ class WhoAmIUserTest(BaseSingleUserTest):
 
     def test_whoami(self):
         url = reverse('token-obtain-pair', kwargs={'version': 'v1'})
+        response_content = b'{"username":"test.user","email":"test.user@domain.com"}'
         auth = self.client.post(url, data=json.dumps(self._user),
                                 content_type='application/json')
 
@@ -137,7 +138,7 @@ class WhoAmIUserTest(BaseSingleUserTest):
         response = self.client.get(url, content_type='application/json',
                                    HTTP_AUTHORIZATION=fake_header)
 
-        self.assertEqual(response.content, b'{"username":"test.user"}')
+        self.assertEqual(response.content, response_content)
 
     def test_whoami_unauthorized(self):
         url = reverse('who-am-i', kwargs={'version': 'v1'})
