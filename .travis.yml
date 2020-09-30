@@ -21,5 +21,5 @@ script:
   # Lint the test modules in a different way -- ignore
   # missing-function-docstring since each test case name is self-descriptive,
   # so there is no need to repeat them in docstrings.
-  - find . -name tests.py | xargs pylint --max-line-length=100 --load-plugins=pylint_django --disable=missing-function-docstring
+  - find . -name tests.py | xargs pylint --max-line-length=100 --load-plugins=pylint_django --disable=missing-function-docstring,imported-auth-user
   - env PG_PORT=5432 SECRET_KEY=secret python3 manage.py test
