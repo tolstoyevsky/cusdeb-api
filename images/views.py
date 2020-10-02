@@ -14,7 +14,6 @@ class ListDevicesView(generics.ListAPIView):
 
     queryset = Device.objects.filter(active=True)
     serializer_class = DeviceSerializer
-    permission_classes = (permissions.IsAuthenticated, )
 
 
 class ListImagesView(generics.ListAPIView):
