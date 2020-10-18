@@ -1,6 +1,8 @@
 """Data models for the CusDeb API Images application. """
 
+from django.contrib.auth.models import User
 from django.db import models
+from django.utils.timezone import now
 
 
 class DistroName(models.Model):
@@ -79,15 +81,6 @@ class Device(models.Model):
         return '{} {}'.format(self.name, self.model)
 
 
-class Image(models.Model):
-    name = models.CharField(max_length=255)
-    device = models.ForeignKey(Device, models.PROTECT)
-    os = models.ForeignKey(OS, models.PROTECT)
-
-    def __str__(self):
-        return '{}'.format(self.name)
-
-
 class BuildTypeName(models.Model):
     """Build type name (i.e. Classic image, Mender-compatible image, Mender artifact). """
 
@@ -109,3 +102,63 @@ class BuildType(models.Model):
 
     def __str__(self):
         return '{} on {}'.format(self.os, self.device)
+
+
+class Image(models.Model):
+    """Model representing an image which has been built (or is being built) by CusDeb. """
+
+    CLASSIC = 'C'
+    MENDER = 'M'
+    ARTIFACT = 'A'
+
+    FLAVOUR_CHOICES = {
+        (CLASSIC, 'Classic'),
+        (MENDER, 'Mender'),
+        (ARTIFACT, 'Artifact'),
+    }
+
+    UNDEFINED = 'U'
+    PENDING = 'P'
+    BUILDING = 'B'
+    FAILED = 'F'
+    SUCCEEDED = 'S'
+
+    STATUS_CHOICES = (
+        (UNDEFINED, 'Undefined'),
+        (PENDING, 'Pending'),
+        (BUILDING, 'Building'),
+        (FAILED, 'Failed'),
+        (SUCCEEDED, 'Succeeded'),
+    )
+
+    def change_status_to(self, status):
+        """Changes the current status to the specified one. """
+
+        self.status = status
+        self.save(update_fields=['status'])
+
+    def set_started_at(self):
+        """Sets the 'started_at' field to now. """
+
+        self.started_at = now()
+        self.save(update_fields=['started_at'])
+
+    def set_finished_at(self):
+        """Sets the 'finished_at' field to now. """
+
+        self.finished_at = now()
+        self.save(update_fields=['finished_at'])
+
+    user = models.ForeignKey(User, models.PROTECT)
+    image_id = models.CharField(max_length=36)
+    device_name = models.CharField(max_length=64)
+    distro_name = models.CharField(max_length=64)
+    flavour = models.CharField(max_length=1, choices=FLAVOUR_CHOICES, default=CLASSIC)
+    created_at = models.DateTimeField(auto_now_add=True, editable=False)
+    started_at = models.DateTimeField(blank=True, null=True)
+    finished_at = models.DateTimeField(blank=True, null=True)
+    status = models.CharField(max_length=1, choices=STATUS_CHOICES, default=UNDEFINED)
+    notes = models.TextField(default='')
+
+    def __str__(self):
+        return '{} on {}'.format(self.distro_name, self.device_name)
