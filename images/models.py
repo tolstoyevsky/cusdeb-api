@@ -1,7 +1,7 @@
 """Data models for the CusDeb API Images application. """
 
 from django.contrib.auth.models import User
-from django.db import models
+from django.db import models, transaction
 from django.utils.timezone import now
 
 
@@ -104,6 +104,27 @@ class BuildType(models.Model):
         return '{} on {}'.format(self.os, self.device)
 
 
+class ImageManager(models.Manager):
+    """Image model manager. """
+
+    def get_any(self):
+        """
+        * Fetches a pending for building image from the database.
+        * Changes the image status to 'BUILDING'.
+        * Returns the image.
+        """
+
+        with transaction.atomic():
+            image = self.select_for_update().filter(status=Image.PENDING).first()
+            if not image:
+                return None
+
+            image.status = Image.BUILDING
+            image.save(update_fields=['status'])
+
+        return image
+
+
 class Image(models.Model):
     """Model representing an image which has been built (or is being built) by CusDeb. """
 
@@ -159,6 +180,7 @@ class Image(models.Model):
     finished_at = models.DateTimeField(blank=True, null=True)
     status = models.CharField(max_length=1, choices=STATUS_CHOICES, default=UNDEFINED)
     notes = models.TextField(default='')
+    objects = ImageManager()
 
     def __str__(self):
         return '{} on {}'.format(self.distro_name, self.device_name)
