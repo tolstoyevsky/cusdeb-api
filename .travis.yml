@@ -17,7 +17,7 @@ install:
 
 script:
   # By default max-line-length is 100, but specify it explicitly.
-  - find -name "*.py" -not -path "./.git/*" -not -path "*/migrations/*" ! -name "tests.py" | xargs pylint --max-line-length=100 --load-plugins=pylint_django --disable=imported-auth-user
+  - find -name "*.py" -not -path "./.git/*" -not -path "*/migrations/*" ! -name "tests.py" | xargs pylint --max-line-length=100 --load-plugins=pylint_django --disable=imported-auth-user,too-few-public-methods
   # Lint the test modules in a different way -- ignore
   # missing-function-docstring since each test case name is self-descriptive,
   # so there is no need to repeat them in docstrings.
