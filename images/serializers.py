@@ -64,11 +64,20 @@ class DeviceSerializer(serializers.ModelSerializer):
 class ImageSerializer(serializers.ModelSerializer):
     """Serializes an image. """
 
-    device = DeviceSerializer()
-    os = OSSerializer()
-    build_type = serializers.StringRelatedField()
+    flavour = serializers.SerializerMethodField()
+    status = serializers.SerializerMethodField()
 
     class Meta:
         model = Image
-        fields = ('device', 'os', 'build_type', 'started_at', 'status',
-                  'format', 'finished_at', 'notes', )
+        fields = ('image_id', 'device_name', 'distro_name', 'flavour', 'started_at', 'status',
+                  'notes', )
+
+    def get_flavour(self, obj):  # pylint: disable=no-self-use
+        """Returns the image flavour. """
+
+        return obj.get_flavour_display()
+
+    def get_status(self, obj):  # pylint: disable=no-self-use
+        """Returns the image status. """
+
+        return obj.get_status_display()
