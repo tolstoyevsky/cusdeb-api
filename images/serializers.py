@@ -81,3 +81,29 @@ class ImageSerializer(serializers.ModelSerializer):
         """Returns the image status. """
 
         return obj.get_status_display()
+
+
+class ImageNotesUpdateSerializer(serializers.Serializer):  # pylint: disable=abstract-method
+    """Serializes both the image_id and the notes provided by the current user to update their
+    image notes. """
+
+    image_id = serializers.UUIDField()
+    notes = serializers.CharField(allow_blank=True)
+
+    def __init__(self, *args, **kwargs):
+        self.user = kwargs.pop('current_user')
+
+        super().__init__(*args, **kwargs)
+
+    def validate_image_id(self, value):  # pylint: disable=no-self-use
+        """Validates if image with image_id exist and the current user has updated image. """
+
+        try:
+            image = Image.objects.get(image_id=value)
+        except Image.DoesNotExist as does_not_exist:
+            raise serializers.ValidationError('Image does not exist.') from does_not_exist
+
+        if image.user != self.user:
+            raise serializers.ValidationError('Current user does not have current image.')
+
+        return value
