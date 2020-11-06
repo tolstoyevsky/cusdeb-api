@@ -8,6 +8,7 @@ from rest_framework.views import status
 from .models import Device, Image
 from .serializers import (
     DeviceSerializer,
+    ImageDeleteSerializer,
     ImageNotesUpdateSerializer,
     ImageSerializer,
 )
@@ -29,6 +30,26 @@ class ListImagesView(generics.ListAPIView):
     def get_queryset(self):
         user = self.request.user
         return Image.objects.filter(user=user)
+
+
+class ImageDeleteView(generics.DestroyAPIView):
+    """Deletes an image. """
+
+    permission_classes = (permissions.IsAuthenticated, )
+
+    def delete(self, request, *args, **kwargs):
+        image_id = request.data.get('image_id', '')
+
+        serializer = ImageDeleteSerializer(
+            data={'image_id': image_id},
+            current_user=request.user,
+        )
+
+        if serializer.is_valid():
+            Image.objects.filter(image_id=image_id).delete()
+            return Response(status=status.HTTP_200_OK)
+
+        return JsonResponse(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 class ImageNotesUpdateView(generics.UpdateAPIView):
