@@ -170,6 +170,12 @@ class Image(models.Model):
         self.finished_at = now()
         self.save(update_fields=['finished_at'])
 
+    def store_build_log(self, build_log):
+        """Stores the build log in the 'build_log' field. """
+
+        self.build_log = build_log
+        self.save(update_fields=['build_log'])
+
     user = models.ForeignKey(User, models.PROTECT)
     image_id = models.CharField(max_length=36)
     device_name = models.CharField(max_length=64)
@@ -180,6 +186,7 @@ class Image(models.Model):
     finished_at = models.DateTimeField(blank=True, null=True)
     status = models.CharField(max_length=1, choices=STATUS_CHOICES, default=UNDEFINED)
     notes = models.TextField(default='')
+    build_log = models.TextField(default='')
     objects = ImageManager()
 
     def __str__(self):
