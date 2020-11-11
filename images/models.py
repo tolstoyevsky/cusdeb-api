@@ -142,6 +142,7 @@ class Image(models.Model):
     PENDING = 'P'
     BUILDING = 'B'
     FAILED = 'F'
+    INTERRUPTED = 'I'
     SUCCEEDED = 'S'
 
     STATUS_CHOICES = (
@@ -149,6 +150,7 @@ class Image(models.Model):
         (PENDING, 'Pending'),
         (BUILDING, 'Building'),
         (FAILED, 'Failed'),
+        (INTERRUPTED, 'Interrupted'),
         (SUCCEEDED, 'Succeeded'),
     )
 
