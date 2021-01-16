@@ -6,6 +6,8 @@ from django.contrib.auth.password_validation import validate_password
 from rest_framework import serializers
 from rest_framework_simplejwt.tokens import RefreshToken
 
+from .models import EmailConfirmationToken
+
 
 class TokenSerializer(serializers.Serializer):  # pylint: disable=abstract-method
     """Serializes the token data. """
@@ -142,5 +144,19 @@ class UserProfileDeleteSerializer(serializers.Serializer):  # pylint: disable=ab
 
         if not self.user.check_password(value):
             raise serializers.ValidationError('Incorrect password.')
+
+        return value
+
+
+class ConfirmEmailSerializer(serializers.Serializer):  # pylint: disable=abstract-method
+    """Serializes the email confirmation token. """
+
+    token = serializers.CharField(max_length=8, min_length=8)
+
+    def validate_token(self, value):  # pylint: disable=no-self-use
+        """Validates the email confirmation token. """
+
+        if not EmailConfirmationToken.objects.filter(token=value).exists():
+            raise serializers.ValidationError("Token doesn't exist.")
 
         return value
