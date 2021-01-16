@@ -4,10 +4,11 @@ URL configuration for the CusDeb API Users application (fetching user-specific i
 
 from django.urls import re_path, include
 
-from .views import WhoAmIView, PasswordUpdate, UserLoginUpdate, UserProfileDelete
+from .views import ConfirmEmailView, WhoAmIView, PasswordUpdate, UserLoginUpdate, UserProfileDelete
 
 
 urlpatterns = [  # pylint: disable=invalid-name
+    re_path('confirm_email/?$', ConfirmEmailView.as_view(), name='confirm-email'),
     re_path('whoami/?$', WhoAmIView.as_view(), name='who-am-i'),
     re_path('password_reset/?', include('django_rest_passwordreset.urls',
                                         namespace='password_reset')),

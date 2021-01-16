@@ -11,13 +11,16 @@ from django.views.decorators.http import require_POST
 from django.views.decorators.cache import never_cache
 from rest_framework import generics
 from rest_framework import permissions
+from rest_framework.generics import GenericAPIView
 from rest_framework.response import Response
 from rest_framework.views import status
 from social_core.actions import do_auth, do_complete, do_disconnect
 from social_core.utils import setting_name
 from social_django.views import _do_login
 
+from .models import clear_expired_email_confirmation_tokens, EmailConfirmationToken
 from .serializers import (
+    ConfirmEmailSerializer,
     CurrentUserSerializer,
     SocialTokenObtainPairSerializer,
     PasswordUpdateSerializer,
@@ -76,6 +79,32 @@ class WhoAmIView(generics.RetrieveAPIView):
 
     def get_object(self):
         return self.request.user
+
+
+class ConfirmEmailView(GenericAPIView):
+    """Confirms the user email and clears all expired tokens. """
+
+    permission_classes = (permissions.AllowAny, )
+
+    def post(self, request, *_args, **_kwargs):
+        """POST-method for confirming email. """
+
+        clear_expired_email_confirmation_tokens()
+
+        token = request.data.get('token', '')
+
+        serializer = ConfirmEmailSerializer(data={'token': token})
+        if serializer.is_valid():
+            email_confirmation_token = EmailConfirmationToken.objects.get(
+                token=serializer.validated_data['token']
+            )
+            email_confirmation_token.person.email_confirmed = True
+            email_confirmation_token.person.save(update_fields=['email_confirmed'])
+            email_confirmation_token.delete()
+
+            return Response(status=status.HTTP_200_OK)
+
+        return JsonResponse(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 class GetTokenForSocial(View):
