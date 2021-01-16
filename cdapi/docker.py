@@ -66,3 +66,5 @@ BASE_SITE_URL = os.getenv('BASE_SITE_URL', 'cusdeb.com')
 DEFAULT_FROM_EMAIL = os.getenv('DEFAULT_FROM_EMAIL', 'info@cusdeb.com')
 
 DEFAULT_SITE_NAME = os.getenv('DEFAULT_SITE_NAME', 'CusDeb')
+
+EMAIL_CONFIRMATION_TOKEN_TTL = int(os.getenv('EMAIL_CONFIRMATION_TTL', '1440'))  # 24 hours

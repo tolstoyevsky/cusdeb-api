@@ -1,0 +1,4 @@
+Hello!
+Today, {{ username }} registration was made on the site {{ site_name }} using Your email address.
+If it was You, please confirm your email address by following this link: {{ confirm_email_url }}
+If you do not create account, just ignore this message.
