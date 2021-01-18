@@ -15,7 +15,7 @@ from images.models import (
     OS,
     Port,
 )
-from util.base_test import BaseSingleUserTest
+from util.base_test import BaseImageTest, BaseSingleUserTest
 
 
 class InitStageTest(BaseSingleUserTest):
@@ -104,3 +104,43 @@ class InitStageTest(BaseSingleUserTest):
         self.assertEqual(json.loads(response.content), expected)
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+
+class ImageListingTest(BaseImageTest):
+    """Tests the getting list of images. """
+
+    def test_listing_images(self):
+        """Tests if possible get list of images. """
+
+        url = reverse('token-obtain-pair', kwargs={'version': 'v1'})
+        auth = self.client.post(url, data=json.dumps(self._user),
+                                content_type='application/json')
+        header = b'Bearer ' + json.loads(auth.content)['access'].encode()
+        url = reverse('images-all', kwargs={'version': 'v1'})
+
+        response = self.client.get(url, content_type='application/json',
+                                   HTTP_AUTHORIZATION=header)
+
+        expected = [
+            {
+                'image_id': self._user_image_id,
+                'device_name': 'Raspberry Pi 3 Model B',
+                'distro_name': 'Debian 10 "Buster" (32-bit)',
+                'flavour': 'Classic',
+                'started_at': None,
+                'status': 'Succeeded',
+                'notes': ''
+            }
+        ]
+
+        self.assertEqual(json.loads(response.content), expected)
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    def test_listing_images_unauthorized(self):
+        """Tests if it's not possible to get list of images when unauthorized. """
+
+        url = reverse('images-all', kwargs={'version': 'v1'})
+        response = self.client.delete(url, content_type='application/json')
+
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
