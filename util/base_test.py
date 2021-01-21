@@ -16,4 +16,7 @@ class BaseSingleUserTest(APITestCase):
         }
 
     def setUp(self):
-        User.objects.create_user(**self._user)
+        user = User.objects.create_user(**self._user)
+
+        user.person.email_confirmed = True
+        user.person.save(update_fields=['email_confirmed'])
