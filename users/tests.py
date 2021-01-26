@@ -1,9 +1,12 @@
 """Tests for the CusDeb API Users application. """
 
 import json
+from datetime import timedelta
 
+from django.conf import settings
 from django.contrib.auth.models import User
 from django.urls import reverse
+from django.utils import timezone
 from rest_framework.views import status
 
 from util.base_test import BaseSingleUserTest
@@ -450,3 +453,66 @@ class UserProfileDeleteTest(BaseSingleUserTest):
         response = self.client.post(url, content_type='application/json')
 
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+
+
+class UserConfirmEmailTest(BaseSingleUserTest):
+    """Tests the confirm_email endpoint. """
+
+    def test_confirm_email(self):
+        """Test if it's possible to confirm the user email. """
+
+        user = User.objects.get(username=self._user['username'])
+        user.person.email_confirmed = False
+        user.person.save(update_fields=['email_confirmed'])
+        email_confirmation_token = user.person.emailconfirmationtoken.token
+
+        url = reverse('confirm-email', kwargs={'version': 'v1'})
+        data = {'token': email_confirmation_token}
+        response = self.client.post(url, data=json.dumps(data),
+                                    content_type='application/json')
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    def test_confirm_email_with_invalid_token(self):
+        """Tests if it's not possible to confirm the user email with invalid token. """
+
+        url = reverse('confirm-email', kwargs={'version': 'v1'})
+        response = self.client.post(url, data=json.dumps({'token': 'invalid_token'}),
+                                    content_type='application/json')
+
+        self.assertEqual(response.content,
+                         b'{"token": ["Ensure this field has no more than 8 characters."]}')
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+    def test_confirm_email_with_already_confirmed_email(self):
+        """Tests if it's not possible to confirm an already confirmed email. """
+
+        user = User.objects.get(username=self._user['username'])
+        email_confirmation_token = user.person.emailconfirmationtoken.token
+        user.person.emailconfirmationtoken.delete()
+
+        url = reverse('confirm-email', kwargs={'version': 'v1'})
+        response = self.client.post(url, data=json.dumps({'token': email_confirmation_token}),
+                                    content_type='application/json')
+
+        self.assertEqual(response.content, b'{"token": ["Token doesn\'t exist."]}')
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+    def test_confirm_email_with_expired_token(self):
+        """Tests if it's not possible to confirm the user email with an expired token. """
+
+        user = User.objects.get(username=self._user['username'])
+        user.person.email_confirmed = False
+        user.person.save(update_fields=['email_confirmed'])
+
+        email_confirmation_token = user.person.emailconfirmationtoken.token
+        user.person.emailconfirmationtoken.created_at = timezone.now() - timedelta(
+            minutes=settings.EMAIL_CONFIRMATION_TOKEN_TTL)
+        user.person.emailconfirmationtoken.save(update_fields=['created_at'])
+
+        url = reverse('confirm-email', kwargs={'version': 'v1'})
+        response = self.client.post(url, data=json.dumps({'token': email_confirmation_token}),
+                                    content_type='application/json')
+
+        self.assertEqual(response.content, b'{"token": ["Token doesn\'t exist."]}')
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
