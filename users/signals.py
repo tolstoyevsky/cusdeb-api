@@ -31,6 +31,7 @@ def create_person(sender,  # pylint: disable=unused-argument
                                  f'{person.emailconfirmationtoken.token}',
             'base_site_url': f'{settings.BASE_SITE_URL}',
             'site_name': f'{settings.DEFAULT_SITE_NAME}',
+            'expiry_time': settings.EMAIL_CONFIRMATION_TOKEN_TTL // 60,
         }
 
         # render email text
