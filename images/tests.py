@@ -106,7 +106,7 @@ class InitStageTest(BaseSingleUserTest):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
 
-class ImageListingTest(BaseImageTest):
+class ImageListingTest(BaseImageTest):  # pylint: disable=too-many-ancestors
     """Tests the getting list of images. """
 
     def test_listing_images(self):
@@ -146,7 +146,7 @@ class ImageListingTest(BaseImageTest):
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
 
 
-class ImageDeleteTest(BaseImageTest):
+class ImageDeleteTest(BaseImageTest):  # pylint: disable=too-many-ancestors
     """Tests the deleting image. """
 
     def test_image_delete(self):
@@ -210,7 +210,7 @@ class ImageDeleteTest(BaseImageTest):
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
 
-class ImageUpdateNotesTest(BaseImageTest):
+class ImageUpdateNotesTest(BaseImageTest):  # pylint: disable=too-many-ancestors
     """Tests the updating notes of image. """
 
     def test_update_notes(self):
