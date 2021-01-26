@@ -27,6 +27,7 @@ def create_person(sender,  # pylint: disable=unused-argument
         confirm_email_base_url = urljoin(settings.BASE_SITE_URL, '/confirm-email/')
         context = {
             'username': instance.username,
+            'email': instance.email,
             'confirm_email_url': f'{confirm_email_base_url}?token='
                                  f'{person.emailconfirmationtoken.token}',
             'base_site_url': f'{settings.BASE_SITE_URL}',
