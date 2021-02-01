@@ -1,24 +1,27 @@
 """Module containing the class-based views related to the CusDeb API Images application. """
 
+from django.conf import settings
 from django.http import JsonResponse
+from django.views import View
 from rest_framework import generics, permissions
 from rest_framework.response import Response
 from rest_framework.views import status
 
-from .models import Device, Image
+from .models import Image
 from .serializers import (
-    DeviceSerializer,
     ImageDeleteSerializer,
     ImageNotesUpdateSerializer,
     ImageSerializer,
 )
 
 
-class ListDevicesView(generics.ListAPIView):
+class ListDevicesView(View):
     """Returns the list of devices supported by CusDeb. """
 
-    queryset = Device.objects.filter(active=True)
-    serializer_class = DeviceSerializer
+    def get(self, *_args, **_kwargs):
+        """GET-method for receiving devices list. """
+
+        return JsonResponse(settings.DEVICES_LIST)
 
 
 class ListImagesView(generics.ListAPIView):
