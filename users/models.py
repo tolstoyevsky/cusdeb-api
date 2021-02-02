@@ -6,6 +6,7 @@ from datetime import timedelta
 
 from django.conf import settings
 from django.contrib.auth.models import User
+from django.contrib.postgres.fields import JSONField
 from django.db import models
 from django.utils import timezone
 
@@ -15,6 +16,7 @@ class Person(models.Model):
 
     user = models.OneToOneField(User, models.CASCADE)
     email_confirmed = models.BooleanField(default=False)
+    props = JSONField(default=dict)
 
     def __str__(self):
         return f'{self.user}'
