@@ -15,7 +15,7 @@ from images.models import (
     OS,
     Port,
 )
-from util.base_test import BaseSingleUserTest
+from util.base_test import BaseImageTest, BaseSingleUserTest
 
 
 class InitStageTest(BaseSingleUserTest):
@@ -104,3 +104,172 @@ class InitStageTest(BaseSingleUserTest):
         self.assertEqual(json.loads(response.content), expected)
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+
+class ImageListingTest(BaseImageTest):  # pylint: disable=too-many-ancestors
+    """Tests the getting list of images. """
+
+    def test_listing_images(self):
+        """Tests if possible get list of images. """
+
+        url = reverse('token-obtain-pair', kwargs={'version': 'v1'})
+        auth = self.client.post(url, data=json.dumps(self._user),
+                                content_type='application/json')
+        header = b'Bearer ' + json.loads(auth.content)['access'].encode()
+        url = reverse('images-all', kwargs={'version': 'v1'})
+
+        response = self.client.get(url, content_type='application/json',
+                                   HTTP_AUTHORIZATION=header)
+
+        expected = [
+            {
+                'image_id': self._user_image_id,
+                'device_name': 'Raspberry Pi 3 Model B',
+                'distro_name': 'Debian 10 "Buster" (32-bit)',
+                'flavour': 'Classic',
+                'started_at': None,
+                'status': 'Succeeded',
+                'notes': ''
+            }
+        ]
+
+        self.assertEqual(json.loads(response.content), expected)
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    def test_listing_images_unauthorized(self):
+        """Tests if it's not possible to get list of images when unauthorized. """
+
+        url = reverse('images-all', kwargs={'version': 'v1'})
+        response = self.client.delete(url, content_type='application/json')
+
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+
+
+class ImageDeleteTest(BaseImageTest):  # pylint: disable=too-many-ancestors
+    """Tests the deleting image. """
+
+    def test_image_delete(self):
+        url = reverse('token-obtain-pair', kwargs={'version': 'v1'})
+        auth = self.client.post(url, data=json.dumps(self._user),
+                                content_type='application/json')
+        header = b'Bearer ' + json.loads(auth.content)['access'].encode()
+        url = reverse('image-delete', kwargs={'version': 'v1'})
+
+        data = {'image_id': self._user_image_id}
+        response = self.client.delete(url, data=json.dumps(data), content_type='application/json',
+                                      HTTP_AUTHORIZATION=header)
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    def test_image_delete_unauthorized(self):
+        """Tests if it's not possible to delete a image when unauthorized. """
+
+        url = reverse('image-delete', kwargs={'version': 'v1'})
+
+        data = {'image_id': self._user_image_id}
+        response = self.client.delete(url, data=json.dumps(data), content_type='application/json')
+
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+
+    def test_image_delete_no_existing_image(self):
+        """Tests if it's not possible to delete a image when it doesn't exist. """
+
+        url = reverse('token-obtain-pair', kwargs={'version': 'v1'})
+        auth = self.client.post(url, data=json.dumps(self._user),
+                                content_type='application/json')
+        header = b'Bearer ' + json.loads(auth.content)['access'].encode()
+        url = reverse('image-delete', kwargs={'version': 'v1'})
+
+        data = {'image_id': 'a290bde6-1cde-45db-a5ed-4cf8273c80b5'}
+        response = self.client.delete(url, data=json.dumps(data), content_type='application/json',
+                                      HTTP_AUTHORIZATION=header)
+
+        self.assertEqual(response.content, b'{"image_id": ["Image does not exist."]}')
+
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+    def test_image_delete_user_not_have_current_image(self):
+        """Tests if it's not possible to delete a image when it not belong current user. """
+
+        url = reverse('token-obtain-pair', kwargs={'version': 'v1'})
+        auth = self.client.post(url, data=json.dumps(self._user),
+                                content_type='application/json')
+        header = b'Bearer ' + json.loads(auth.content)['access'].encode()
+        url = reverse('image-delete', kwargs={'version': 'v1'})
+
+        data = {'image_id': self._user2_image_id}
+        response = self.client.delete(url, data=json.dumps(data), content_type='application/json',
+                                      HTTP_AUTHORIZATION=header)
+
+        self.assertEqual(
+            response.content,
+            b'{"image_id": ["Current user does not have current image."]}',
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+
+class ImageUpdateNotesTest(BaseImageTest):  # pylint: disable=too-many-ancestors
+    """Tests the updating notes of image. """
+
+    def test_update_notes(self):
+        url = reverse('token-obtain-pair', kwargs={'version': 'v1'})
+        auth = self.client.post(url, data=json.dumps(self._user),
+                                content_type='application/json')
+        header = b'Bearer ' + json.loads(auth.content)['access'].encode()
+        url = reverse('image-notes-update', kwargs={'version': 'v1'})
+
+        data = {'image_id': self._user_image_id, 'notes': 'test'}
+        response = self.client.put(url, data=json.dumps(data), content_type='application/json',
+                                   HTTP_AUTHORIZATION=header)
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    def test_image_update_notes_unauthorized(self):
+        """Tests if it's not possible to update notes of image when unauthorized. """
+
+        url = reverse('image-notes-update', kwargs={'version': 'v1'})
+        data = {'image_id': self._user_image_id, 'notes': 'test'}
+
+        response = self.client.put(url, data=json.dumps(data), content_type='application/json')
+
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+
+    def test_image_update_notes_no_existing_image(self):
+        """Tests if it's not possible to update notes of image when it doesn't exist. """
+
+        url = reverse('token-obtain-pair', kwargs={'version': 'v1'})
+        auth = self.client.post(url, data=json.dumps(self._user),
+                                content_type='application/json')
+        header = b'Bearer ' + json.loads(auth.content)['access'].encode()
+        url = reverse('image-notes-update', kwargs={'version': 'v1'})
+
+        data = {'image_id': 'a290bde6-1cde-45db-a5ed-4cf8273c80b5', 'notes': 'test'}
+        response = self.client.put(url, data=json.dumps(data), content_type='application/json',
+                                   HTTP_AUTHORIZATION=header)
+
+        self.assertEqual(response.content, b'{"image_id": ["Image does not exist."]}')
+
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+    def test_image_update_notes_user_not_have_current_image(self):
+        """Tests if it's not possible to update notes of image when it not belong current user.
+        """
+
+        url = reverse('token-obtain-pair', kwargs={'version': 'v1'})
+        auth = self.client.post(url, data=json.dumps(self._user),
+                                content_type='application/json')
+        header = b'Bearer ' + json.loads(auth.content)['access'].encode()
+        url = reverse('image-notes-update', kwargs={'version': 'v1'})
+
+        data = {'image_id': self._user2_image_id, 'notes': 'test'}
+        response = self.client.put(url, data=json.dumps(data), content_type='application/json',
+                                   HTTP_AUTHORIZATION=header)
+
+        self.assertEqual(
+            response.content,
+            b'{"image_id": ["Current user does not have current image."]}',
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
