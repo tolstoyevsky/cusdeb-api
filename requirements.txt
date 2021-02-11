@@ -2,7 +2,7 @@ Django==2.2.*
 django-rest-passwordreset==1.1.0
 djangorestframework==3.9.*
 djangorestframework_simplejwt==4.6.0
-pieman-devices==0.2
+pieman-devices==0.3
 psycopg2==2.8.*
 social-auth-app-django==4.0.0
 social-auth-core==4.0.3
