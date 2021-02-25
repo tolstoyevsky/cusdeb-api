@@ -1,6 +1,7 @@
 """Data models for the CusDeb API Images application. """
 
 from django.contrib.auth.models import User
+from django.contrib.postgres.fields import JSONField
 from django.db import models, transaction
 from django.utils.timezone import now
 
@@ -90,6 +91,7 @@ class Image(models.Model):
     status = models.CharField(max_length=1, choices=STATUS_CHOICES, default=UNDEFINED)
     notes = models.TextField(default='')
     build_log = models.TextField(default='')
+    props = JSONField(default=dict)
     objects = ImageManager()
 
     def __str__(self):
