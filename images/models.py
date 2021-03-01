@@ -80,7 +80,7 @@ class Image(models.Model):
         self.build_log = build_log
         self.save(update_fields=['build_log'])
 
-    user = models.ForeignKey(User, models.PROTECT, null=True, blank=True)
+    user = models.ForeignKey(User, models.CASCADE, null=True, blank=True)
     image_id = models.CharField(max_length=36)
     device_name = models.CharField(max_length=64)
     distro_name = models.CharField(max_length=64)
