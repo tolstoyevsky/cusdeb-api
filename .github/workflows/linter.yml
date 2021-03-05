@@ -1,0 +1,73 @@
+name: Linter and Tests Runners
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  lint:
+    name: Run linter
+
+    runs-on: ubuntu-latest
+
+    env:
+      SECRET_KEY: secret
+      DJANGO_SETTINGS_MODULE: cdapi.docker
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Set up Python 3.7
+        uses: actions/setup-python@v1
+        with:
+          python-version: 3.7
+      
+      - name: Install requirements
+        run: |
+          pip install -r requirements.txt
+          pip install pylint pylint-django
+
+      - name: Run pylint
+        run: |
+          # By default max-line-length is 100, but specify it explicitly.
+          find -name "*.py" -not -path "./.git/*" -not -path "*/migrations/*" ! -name "tests.py" | xargs pylint --max-line-length=100 --load-plugins=pylint_django --disable=imported-auth-user,too-few-public-methods 
+          # Lint the test modules in a different way -- ignore
+          # missing-function-docstring since each test case name is self-descriptive,
+          # so there is no need to repeat them in docstrings.
+          find . -name tests.py | xargs pylint --max-line-length=100 --load-plugins=pylint_django --disable=missing-function-docstring,imported-auth-user
+  test:
+    name: Run tests
+
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:12
+        env:
+          POSTGRES_PASSWORD: secret
+        ports:
+          - 54321:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    env:
+      SECRET_KEY: secret
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Set up Python 3.7
+        uses: actions/setup-python@v1
+        with:
+          python-version: 3.7
+
+      - name: Install requirements
+        run: pip install -r requirements.txt
+
+      - name: Run test
+        run: python3 manage.py test
