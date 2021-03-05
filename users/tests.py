@@ -7,6 +7,7 @@ from django.conf import settings
 from django.contrib.auth.models import User
 from django.urls import reverse
 from django.utils import timezone
+from rest_framework.exceptions import ErrorDetail
 from rest_framework.views import status
 
 from util.base_test import BaseSingleUserTest
@@ -117,15 +118,16 @@ class AuthSigningUpAndSigningInUserTest(BaseSingleUserTest):
         user['username'] = 'non.existent.user'
         url = reverse('token-obtain-pair', kwargs={'version': 'v1'})
         error_message = {
-            'non_field_errors': [
-                'No active account found with the given credentials'
-            ]
+            'detail': ErrorDetail(
+                string='No active account found with the given credentials',
+                code='no_active_account',
+            ),
         }
         response = self.client.post(url, data=json.dumps(user),
                                     content_type='application/json')
 
         self.assertEqual(response.data, error_message)
-        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
 
 
 class WhoAmIUserTest(BaseSingleUserTest):
