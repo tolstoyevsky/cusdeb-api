@@ -29,7 +29,7 @@ SECRET_KEY = os.environ['SECRET_KEY']
 
 TOKEN_TTL = int(os.getenv('TOKEN_TTL', '5'))
 
-REFRESH_TOKEN_TTL = int(os.getenv('REFRESH_TOKEN_TTL', '2880'))  # 48 hours
+REFRESH_TOKEN_TTL = int(os.getenv('REFRESH_TOKEN_TTL', '40320'))  # 28 days
 
 SIMPLE_JWT['ALGORITHM'] = os.getenv('JWT_ALGORITHM', 'HS256')
 
