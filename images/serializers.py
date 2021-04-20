@@ -13,8 +13,8 @@ class ImageSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Image
-        fields = ('image_id', 'device_name', 'distro_name', 'flavour', 'started_at', 'status',
-                  'notes', )
+        fields = ('image_id', 'device_name', 'distro_name', 'flavour', 'started_at', 'finished_at',
+                  'status', 'notes', )
 
     def get_flavour(self, obj):  # pylint: disable=no-self-use
         """Returns the image flavour. """
