@@ -27,6 +27,13 @@ class ImageSerializer(serializers.ModelSerializer):
         return obj.get_status_display()
 
 
+class ImageDetailSerializer(ImageSerializer):
+    """Serializes an image detail. """
+
+    class Meta(ImageSerializer.Meta):
+        fields = ImageSerializer.Meta.fields + ('build_log', 'props', )
+
+
 class ImageDeleteSerializer(serializers.Serializer):  # pylint: disable=abstract-method
     """Serializes the image_id provided by the current user to delete their image. """
 
