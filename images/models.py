@@ -9,6 +9,11 @@ from django.utils.timezone import now
 class ImageManager(models.Manager):
     """Image model manager. """
 
+    def without_undefined(self):
+        """Returns an images list excluding images with 'UNDEFINED' status. """
+
+        return self.exclude(status=Image.UNDEFINED)
+
     def get_any(self):
         """
         * Fetches a pending for building image from the database.
