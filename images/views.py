@@ -32,7 +32,7 @@ class ListImagesView(generics.ListAPIView):
 
     def get_queryset(self):
         user = self.request.user
-        return Image.objects.filter(user=user)
+        return Image.objects.without_undefined().filter(user=user)
 
 
 class ImageDeleteView(generics.DestroyAPIView):
