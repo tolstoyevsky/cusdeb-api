@@ -6,7 +6,11 @@ variables.
 import os
 from datetime import timedelta
 
+from dotenv import load_dotenv
+
 from cdapi.settings import *  # pylint: disable=unused-wildcard-import,wildcard-import
+
+load_dotenv()
 
 ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', '127.0.0.1').split(',')
 
