@@ -139,6 +139,7 @@ class WhoAmIUserTest(BaseSingleUserTest):
         auth = self.client.post(url, data=json.dumps(self._user),
                                 content_type='application/json')
 
+        # pylint: disable=no-member
         fake_header = b'Bearer ' + json.loads(auth.content)['access'].encode()
         url = reverse('who-am-i', kwargs={'version': 'v1'})
         response = self.client.get(url, content_type='application/json',
