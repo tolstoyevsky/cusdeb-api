@@ -4,7 +4,6 @@ variables.
 """
 
 import os
-
 from datetime import timedelta
 
 from cdapi.settings import *  # pylint: disable=unused-wildcard-import,wildcard-import
