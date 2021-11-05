@@ -100,4 +100,4 @@ class Image(models.Model):
     objects = ImageManager()
 
     def __str__(self):
-        return '{} on {}'.format(self.distro_name, self.device_name)
+        return f'{self.distro_name} on {self.device_name}'
