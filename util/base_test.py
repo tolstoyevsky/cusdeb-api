@@ -11,7 +11,7 @@ class BaseSingleUserTest(APITestCase):
         super().__init__(*args, **kwargs)
         self._user = {
             'username': 'test.user',
-            'password': 'secret',
+            'password': 'xXSecret1Xx',
             'email': 'test.user@domain.com',
         }
 

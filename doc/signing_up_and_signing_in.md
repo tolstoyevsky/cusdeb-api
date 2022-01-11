@@ -62,6 +62,7 @@ Creates a new user account.
     * `{"13": "Email cannot be empty"}`
     * `{"21": "Username is already in use"}`
     * `{"22": "Email is already in use"}`
+    * `{"31": ["This password is too short. It must contain at least 8 characters.", "This password is too common.", "This password is entirely numeric."]}`
 * **Sample Call:**
 
   `$ curl -L -X POST http://127.0.0.1:8001/api/v1/auth/signup/ -d "username=some.user&password=secret&email=some.user@example.com"`

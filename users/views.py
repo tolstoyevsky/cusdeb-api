@@ -3,7 +3,9 @@
 from django.conf import settings
 from django.contrib.auth import REDIRECT_FIELD_NAME
 from django.contrib.auth.decorators import login_required
+from django.core.exceptions import ValidationError
 from django.contrib.auth.models import User
+from django.contrib.auth.password_validation import validate_password
 from django.http import JsonResponse
 from django.views import View
 from django.views.decorators.csrf import csrf_exempt, csrf_protect
@@ -58,6 +60,11 @@ class SignUpView(generics.CreateAPIView):
 
         if User.objects.filter(email__iexact=email).exists():
             data[22] = 'Email is already in use'
+
+        try:
+            validate_password(password)
+        except ValidationError as valid_error:
+            data[31] = valid_error.messages
 
         if data:
             return Response(
