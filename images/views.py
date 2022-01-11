@@ -10,6 +10,7 @@ from rest_framework.views import status
 from .models import Image
 from .serializers import (
     ImageDeleteSerializer,
+    ImageDetailSerializer,
     ImageNotesUpdateSerializer,
     ImageSerializer,
 )
@@ -53,6 +54,18 @@ class ImageDeleteView(generics.DestroyAPIView):
             return Response(status=status.HTTP_200_OK)
 
         return JsonResponse(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class ImageDetailView(generics.RetrieveAPIView):
+    """Returns the image which belong to the authenticated user. """
+
+    serializer_class = ImageDetailSerializer
+    permission_classes = (permissions.IsAuthenticated, )
+    lookup_field = 'image_id'
+
+    def get_queryset(self):
+        user = self.request.user
+        return Image.objects.filter(user=user)
 
 
 class ImageNotesUpdateView(generics.UpdateAPIView):
